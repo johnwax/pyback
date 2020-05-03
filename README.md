@@ -27,6 +27,12 @@ backdoor doesnt auto-activate the persistance module for better evation chance, 
 the self.persistance() line in backdoor file.  
 for list of commnads type 'h' in the listener console.   
 
+# ToDo
+cred dumping abality  
+linux persistance  
+
+
+
 # POC
 ![Image description](https://github.com/7h3w4lk3r/pyback/blob/master/poc.png)  
   
