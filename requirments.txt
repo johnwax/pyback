@@ -1,0 +1,6 @@
+
+mss==5.1.0
+wmi
+Tkinter
+pycrypto
+pyperclip
