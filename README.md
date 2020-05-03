@@ -28,7 +28,7 @@ the self.persistance() line in backdoor file.
 for list of commnads type 'h' in the listener console.   
 
 # ToDo
-cred dumping abality  
+credential dumping features  
 linux persistance  
 
 
