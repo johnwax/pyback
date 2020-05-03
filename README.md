@@ -14,10 +14,10 @@ FUD python backdoor
 # usage
 pip install -r requirments.txt  
 
-attacker side:
+attacker side:  
 ./listener.py
 
-victim side:
+victim side:  
 ./backdoor.py  
 
 # tips
