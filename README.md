@@ -1,5 +1,5 @@
 # Pyback
-FUD python backdoor  
+FUD python2 backdoor  
 
 # Features
 1- AES encryption available (pycrypto doesnt work as it should with windows so use for linux only)  
