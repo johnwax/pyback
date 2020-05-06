@@ -22,7 +22,7 @@ victim side:
 
 # Tips
 when using pyinstaller for windows executable generation, use the unencrypted backdoor as pycrypto doesn't work on windows.  
-also pyinstaller will encrease the detection rate, use pyinstaller version 3.1.1 for better evation( last time i checked it was 4/71)  
+also pyinstaller will encrease the detection rate.  
 
 `pip install pyinstaller==3.1.1`  
 
