@@ -22,7 +22,10 @@ victim side:
 
 # Tips
 when using pyinstaller for windows executable generation, use the unencrypted backdoor as pycrypto doesn't work on windows.  
-also pyinstaller will encrease the detection rate.  
+also pyinstaller will encrease the detection rate, use pyinstaller version 3.1.1 for better evation( last time i checked it was 4/71)  
+
+`pip install pyinstaller==3.1.1`  
+
 backdoor doesnt auto-activate the persistance module for better evation chance, if you want to change that simply uncomment
 the self.persistance() line in backdoor file.  
 for list of commnads type 'h' in the listener console.   
