@@ -32,12 +32,6 @@ for list of commnads type 'h' in the listener console.
 tkinter most be installed by default, otherwise install it with:  
 `apt install python-tk`  
 
-# To Do
-credential dumping features  
-linux persistance  
-
-
-
 # PoC
 ![Image description](https://github.com/7h3w4lk3r/pyback/blob/master/poc.png)  
   
