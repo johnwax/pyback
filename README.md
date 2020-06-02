@@ -1,15 +1,14 @@
 # Pyback
 FUD python2 backdoor  
 
-# Features
-1- AES encryption available (pycrypto doesnt work as it should with windows so use for linux only)  
-2- screenshot  
-3-check sandbox and VM (VM check only for windows, using wmi module)  
-4- download/upload files  
-5- dump clipboard  
-6- run a fork bomb on victim machine, just for fun:)  
-7- persistance using REGKEY (windows only)  
-8- client or server connection wait (one time only, no reconnecting yet)  
+# Features  
+1- screenshot  
+2-check sandbox and VM (VM check only for windows, using wmi module)  
+3- download/upload files  
+4- dump clipboard  
+5- run a fork bomb on victim machine, just for fun:)  
+6- persistance using REGKEY (windows only)  
+7- client or server connection wait (one time only, no reconnecting yet)  
 
 # Usage
 `pip install -r requirments.txt`  
@@ -21,8 +20,7 @@ victim side:
 `./backdoor.py`  
 
 # Tips
-when using pyinstaller for windows executable generation, use the unencrypted backdoor as pycrypto doesn't work on windows.  
-also pyinstaller will encrease the detection rate.  
+pyinstaller will encrease the detection rate.  
 
 `pip install pyinstaller==3.1.1`  
 
