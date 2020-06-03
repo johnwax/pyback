@@ -2,9 +2,9 @@
 FUD cross-platform python2 persistence backdoor  
 
 # Updates  
-* linux local enumeration function *
-* powershell access *
-* python shell bug fixes and more *
+* linux local enumeration function 
+* powershell access 
+* python shell bug fixes and more 
 
 # Features  
 1- linux post-exploitation enumeration (windows comming soon)
@@ -33,9 +33,10 @@ pyinstaller will encrease the detection rate.use this version only:
 
 backdoor doesnt auto-activate the persistance module for better evation chance, if you want to change that simply uncomment
 the self.persistance() line in backdoor file.  
-for list of commnads type 'h' in the listener console.   
+for list of commnads type 'help' in the listener console.   
 tkinter most be installed by default, otherwise install it with:  
 `apt install python-tk`  
+the `enum` command results will be saved in the listener directory to see colored output use cat `enum*.txt`  
 
 # PoC
 ![Image description](https://github.com/7h3w4lk3r/pyback/blob/master/poc.png)  
