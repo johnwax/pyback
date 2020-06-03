@@ -77,7 +77,6 @@ class listener:
 
     def receive(self):
         json_data = ""
-
         while True:
             try:
                 json_data = json_data + self.conn.recv(4096)
