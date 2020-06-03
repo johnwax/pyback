@@ -7,8 +7,8 @@ FUD cross-platform python2 persistence backdoor
 * python shell bug fixes and more 
 
 # Features  
-1- linux post-exploitation enumeration (windows comming soon)
-2- run powershell commands and scripts
+1- linux post-exploitation enumeration (windows comming soon)  
+2- run powershell commands and scripts  
 3- screenshot  
 4-check sandbox and VM (VM check only for windows, using wmi module)  
 5- download/upload files  
