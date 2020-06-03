@@ -20,7 +20,7 @@ victim side:
 `./backdoor.py`  
 
 # Tips
-pyinstaller will encrease the detection rate.  
+pyinstaller will encrease the detection rate.use this version only:   
 
 `pip install pyinstaller==3.1.1`  
 
