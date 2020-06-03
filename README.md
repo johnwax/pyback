@@ -31,7 +31,7 @@ pyinstaller will encrease the detection rate.use this version only:
 
 `pip install pyinstaller==3.1.1`  
 
-backdoor doesnt auto-activate the persistance module for better evation chance, if you want to change that simply uncomment
+backdoor doesnt auto-activate the persistence module for better evation chance, if you want to change that simply uncomment
 the self.persistance() line in backdoor file.  
 for list of commnads type 'help' in the listener console.   
 tkinter most be installed by default, otherwise install it with:  
