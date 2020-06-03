@@ -2,7 +2,7 @@
 FUD cross-platform python2 persistence backdoor  
 
 # Updates  
-* linux local enumeration function 
+* linux post-exploitation enumeration function 
 * powershell access 
 * python shell bug fixes and more 
 
