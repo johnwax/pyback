@@ -1,14 +1,21 @@
-# Pyback
-FUD python2 backdoor  
+# Pyback 1.1  
+FUD cross-platform python2 persistence backdoor  
+
+# Updates  
+* linux local enumeration function *
+* powershell access *
+* python shell bug fixes and more *
 
 # Features  
-1- screenshot  
-2-check sandbox and VM (VM check only for windows, using wmi module)  
-3- download/upload files  
-4- dump clipboard  
-5- run a fork bomb on victim machine, just for fun:)  
-6- persistance using REGKEY (windows only)  
-7- client or server connection wait (one time only, no reconnecting yet)  
+1- linux post-exploitation enumeration (windows comming soon)
+2- run powershell commands and scripts
+3- screenshot  
+4-check sandbox and VM (VM check only for windows, using wmi module)  
+5- download/upload files  
+6- dump clipboard  
+7- run a fork bomb on victim machine, just for fun:)  
+8- persistance using REGKEY (windows only)  
+9- client or server connection wait (one time only, no reconnecting yet)  
 
 # Usage
 `pip install -r requirments.txt`  
