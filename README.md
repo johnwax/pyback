@@ -3,6 +3,7 @@ FUD cross-platform python2 persistence backdoor
 
 # Updates  
 * linux post-exploitation enumeration function 
+* dump hash files using ntdsutil and reg save
 * powershell access 
 * python shell bug fixes and more 
 
@@ -16,6 +17,7 @@ FUD cross-platform python2 persistence backdoor
 7- run a fork bomb on victim machine, just for fun:)  
 8- persistance using REGKEY (windows only)  
 9- client or server connection wait (one time only, no reconnecting yet)  
+10- dump registry hash files (can be manually downloaded and cracked with impacket-secret or impacket-secretsdump )  
 
 # Usage
 `pip install -r requirments.txt`  
