@@ -1,5 +1,5 @@
 # Pyback 1.1  
-FUD cross-platform python2 persistence backdoor  
+FUD cross-platform python2 backdoor  
 
 # Updates  
 * linux post-exploitation enumeration function 
