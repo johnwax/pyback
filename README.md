@@ -22,6 +22,8 @@ FUD cross-platform python2 backdoor
 # Usage
 `pip install -r requirments.txt`  
 
+change the port and ip or DNS in both listener.py and backdoor.py files  
+
 attacker side:  
 `./listener.py`
 
@@ -29,18 +31,18 @@ victim side:
 `./backdoor.py`  
 
 # Tips
-pyinstaller will encrease the detection rate.use this version only:   
-
+pyinstaller will encrease the detection rate. use this version only:   
 `pip install pyinstaller==3.1.1`  
 
-backdoor doesnt auto-activate the persistence module for better evation chance, if you want to change that simply uncomment
+backdoor doesnt auto-activate the persistence module for better evation chance, if you want to change that simply uncomment  
 the self.persistance() line in backdoor file.  
 
-for list of commnads type 'help' in the listener console.   
+for list of commnads type 'help' in the listener console when connected to the backdoor.   
 
 tkinter most be installed by default, otherwise install it with:  
 `apt install python-tk`  
-the `enum` command results will be saved in the listener directory to see colored output use `cat enum*.txt`  
+
+the `enum` command results will be saved in the listener directory. to see colored output use `cat enum*.txt`  
 
 # PoC  
   using pure python code:  
