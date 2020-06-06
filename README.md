@@ -1,14 +1,8 @@
-# Pyback 1.1  
+# Pyback   
 FUD cross-platform python2 backdoor  
 
-# Updates  
-* linux post-exploitation enumeration function 
-* dump hash files using ntdsutil and reg save
-* powershell access 
-* python shell bug fixes and more 
-
 # Features  
-1- linux post-exploitation enumeration (windows comming soon)  
+1- linux and windows post-exploitation enumeration  
 2- run powershell commands and scripts  
 3- screenshot  
 4-check sandbox and VM (VM check only for windows, using wmi module)  
