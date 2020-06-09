@@ -28,6 +28,8 @@ victim side:
 pyinstaller will encrease the detection rate. use this version only:   
 `pip install pyinstaller==3.1.1`  
 
+to use upload functionality you should put the target file in the same directory as the listener.py file  
+
 backdoor doesnt auto-activate the persistence module for better evation chance, if you want to change that simply uncomment  
 the self.persistance() line in backdoor file.  
 
